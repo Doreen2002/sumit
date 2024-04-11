@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import today, add_days
+from frappe.utils import today, add_days, getdate
 
 @frappe.whitelist()
 def avg():
@@ -63,3 +63,25 @@ def get_stock_ledger_entries():
         duration = frappe.utils.getdate(to_date) - frappe.utils.getdate(from_date)
         average_consumption = abs(sum_qty) / duration.days
         return average_consumption
+
+@frappe.whitelist(allow_guest=True)
+def get_consumption():
+        #get stock ledger entries where quanity change is negative
+        from_date = "2024-02-01"
+        to_date = "2024-04-03"
+       
+        entries = frappe.get_list("Stock Ledger Entry",
+        filters={
+            "item_code": "FS/INV/00810",
+            "actual_qty": ["<", 0],
+            "posting_date": [">=", from_date, "<=", to_date],
+            'warehouse': "Stores - FSRaC"
+            },
+        fields=["item_code", "actual_qty"])
+        sum_qty = 0
+        for entry in entries:
+            sum_qty += entry.actual_qty
+        duration = frappe.utils.getdate(to_date) - frappe.utils.getdate(from_date)
+        average_consumption = abs(sum_qty) / duration.days
+        return average_consumption
+    

@@ -33,27 +33,21 @@ frappe.query_reports["Inventory Replenishment Report"] = {
 			default: frappe.datetime.get_today()
 		},
 		
+		// item group
 		{
-			"label": "Send Email",
-			"fieldname": "custom_take_action",
-			"fieldtype": "Button",
-			"width": 200,
-			"click": function() {
-				var me = this;
-				var filters = me.get_values();
-				if (!filters) return;
-				frm.call({
-					method: "send_email",
-					args: {
-					},
-					callback: function(r) {
-						if(r.message) {
-							frappe.msgprint(__("Email Sent"));
-						}
-					}
-				});
-			}
-		}
+			fieldname: 'item_group',
+			label: __('Item Group'),
+			fieldtype: 'Link',
+			options: 'Item Group'
+		},
+		// item code
+		{
+			fieldname: 'item_code',
+			label: __('Item'),
+			fieldtype: 'Link',
+			options: 'Item'
+		},
+
 		
 	],
 	"formatter": function(value, row, column, data, default_formatter) {
